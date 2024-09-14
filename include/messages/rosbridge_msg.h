@@ -134,7 +134,7 @@ public:
 		return true;
 	}
 
-	std::string getOpCodeString()
+	std::string getOpCodeString() const
 	{
 		if (op_ == OPCODE_UNDEFINED) return "opcode_undefined";
 		if (op_ == FRAGMENT) return "fragment";
@@ -164,7 +164,7 @@ public:
 
 protected:
 	// key must be valid as long as 'd' lives!
-	void add_if_value_changed(rapidjson::Document &d, rapidjson::Document::AllocatorType& alloc, const char* key, const std::string& value)
+	void add_if_value_changed(rapidjson::Document &d, rapidjson::Document::AllocatorType& alloc, const char* key, const std::string& value) const
 	{
 		if (!value.empty())
 			d.AddMember(rapidjson::StringRef(key), value, alloc);

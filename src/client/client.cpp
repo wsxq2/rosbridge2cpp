@@ -24,6 +24,10 @@ void connection_error_handler(TransportError err) {
     std::cout << "Error on ROSBridge Socket - You should reinit ROSBridge" << std::endl;
 }
 
+void subCallback(const ROSBridgePublishMsg& msg)
+{
+    std::cout << "enter subCallback"<< msg.topic_ <<std::endl;
+}
 
 int main()
 {
@@ -32,7 +36,7 @@ int main()
 
 
   ROSBridge ros(t);
-  ros.enable_bson_mode();
+  //ros.enable_bson_mode();
   if( !ros.Init("127.0.0.1", 9090))
   {
     std::cerr << "Failed to connect to ROSBridge" << std::endl;
@@ -43,10 +47,14 @@ int main()
 
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-  bson_t *message = BCON_NEW(
-      "data", "Publish from Test Client"
-      );
-  test_topic.Publish(message);
+  rapidjson::Document d(rapidjson::kObjectType);
+  d.AddMember("data", "hello the world", d.GetAllocator());
+  test_topic.Publish(d);
+  
+  ROSTopic test_topic_sub(ros, "/test_rosbridge2cpp_sub", "std_msgs/String");
+  test_topic_sub.Subscribe(subCallback);
+
+
 
   while(true){
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
