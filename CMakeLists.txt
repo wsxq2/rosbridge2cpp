@@ -6,7 +6,7 @@
 # However, this requires an active internet connection
 
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 set(PROJECT_NAME rosbridge2cpp)
 project(${PROJECT_NAME})
 
@@ -17,8 +17,8 @@ if(PkgConfig_FOUND)
 	pkg_search_module(LIBBSON REQUIRED libbson-1.0)
 else()
 	message(STATUS "Didn't fount PkgConfig, please specify the path yourself")
-	set(LIBBSON_DIR "" CACHE PATH "Install directory of libbson. Should contain /include and /lib")
-	set(LIBBSON_INCLUDE_DIRS "${LIBBSON_DIR}/include")
+        set(LIBBSON_DIR "E:\\wangzhiqiang\\work\\project\\install\\rosbridge2cpp\\third-party\\libbson-1.5.3\\install" CACHE PATH "Install directory of libbson. Should contain /include and /lib")
+        set(LIBBSON_INCLUDE_DIRS "${LIBBSON_DIR}/include")
 	set(LIBBSON_LIBRARY_DIRS "${LIBBSON_DIR}/lib")
 	set(LIBBSON_CFLAGS_OTHER "-I${LIBBSON_INCLUDE_DIRS}/libbson-1.0")
 	set(LIBBSON_LIBRARIES "bson-static-1.0.lib" CACHE STRING "Lib file. Different between platforms")
@@ -30,7 +30,7 @@ if(NOT WIN32)
 	set(CMAKE_CXX_FLAGS "-g -Wall")
 endif()
 
-set(CXX_STANDARD C++11)
+set(CMAKE_CXX_STANDARD  11)
 add_definitions(-DRAPIDJSON_HAS_STDSTRING=1)
 add_definitions(-DBSON_STATIC=1)
 
@@ -43,15 +43,19 @@ if(WIN32 AND NOT PkgConfig_FOUND)
 	set(LIBS ${LIBS} "ws2_32") # Needed by libbson on windows 
 endif()
 
+if(WIN32)
+    add_definitions(-DBSON_OS_WIN32)
+endif()
+
 INCLUDE_DIRECTORIES( include)
-ADD_EXECUTABLE( rosbridge2cpp-client
-	src/client/client.cpp 
-	src/client/socket_tcp_connection.cpp 
-	src/ros_bridge.cpp 
-	src/ros_topic.cpp 
-	src/ros_service.cpp 
-	src/ros_tf_broadcaster.cpp 
-)
+#ADD_EXECUTABLE( rosbridge2cpp-client
+#	src/client/client.cpp
+#	src/client/socket_tcp_connection.cpp
+#	src/ros_bridge.cpp
+#	src/ros_topic.cpp
+#	src/ros_service.cpp
+#	src/ros_tf_broadcaster.cpp
+#)
 
 ADD_LIBRARY( rosbridge2cpp SHARED
 #	src/client/socket_tcp_connection.cpp #Not needed for the lib
@@ -60,7 +64,7 @@ ADD_LIBRARY( rosbridge2cpp SHARED
 	src/ros_service.cpp 
 	src/ros_tf_broadcaster.cpp 
 )
-target_link_libraries(rosbridge2cpp-client ${LIBS})
+#target_link_libraries(rosbridge2cpp-client ${LIBS})
 target_link_libraries(rosbridge2cpp ${LIBS})
 #
 #################################
