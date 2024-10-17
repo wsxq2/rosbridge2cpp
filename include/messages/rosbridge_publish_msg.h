@@ -86,8 +86,11 @@ public:
 
 		d.AddMember("latch", latch_, alloc);
 
-		if (!msg_json_.IsNull())
-			d.AddMember("msg", msg_json_, alloc);
+                if (!msg_json_.IsNull()) {
+                    rapidjson::Value v;
+                    v.CopyFrom(msg_json_, alloc);
+                    d.AddMember("msg", v, alloc);
+                }
 
 		return d;
 	}
